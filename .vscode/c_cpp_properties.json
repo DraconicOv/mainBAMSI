@@ -18,11 +18,12 @@
             "includePath": [
                 "/home/mintyfresh/.arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
                 "/home/mintyfresh/.arduino15/packages/arduino/hardware/avr/1.8.6/variants/standard",
+                "/home/mintyfresh/Arduino/libraries/LiquidCrystal_I2C",
+                "/home/mintyfresh/.arduino15/packages/arduino/hardware/avr/1.8.6/libraries/Wire/src",
                 "/home/mintyfresh/Arduino/libraries/Adafruit_MAX31865_library",
                 "/home/mintyfresh/Arduino/libraries/Adafruit_BusIO",
                 "/home/mintyfresh/.arduino15/packages/arduino/hardware/avr/1.8.6/libraries/SPI/src",
                 "/home/mintyfresh/Arduino/libraries/Servo/src",
-                "/home/mintyfresh/.arduino15/packages/arduino/hardware/avr/1.8.6/libraries/Wire/src",
                 "/home/mintyfresh/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/lib/gcc/avr/7.3.0/include",
                 "/home/mintyfresh/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/lib/gcc/avr/7.3.0/include-fixed",
                 "/home/mintyfresh/.arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/avr/include",
