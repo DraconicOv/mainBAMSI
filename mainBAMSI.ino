@@ -98,19 +98,6 @@ void moveStripByWellDist(){
   stripMotor.write(SERVO_STOP);
 }
 
-void setup() {
-  stripMotor.attach(STRIP_SERVO_PIN);
-  electrodeLiftServo.attach(ELECTRODE_SERVO_PIN);
-  pinMode(STRIP_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
-  pinMode(ELECTRODE_LIFT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
-  pinMode(LENS_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
-  pinMode(LENS_LED_PIN, OUTPUT);
-  pinMode(BOTTOM_LED_PIN, OUTPUT);
-  pinMode(SIDE_LED_PIN, OUTPUT);
-  loadingCycle();
-  electrodeServoConf();
-}
-
 void stimCycle(){
   moveElectrodeToStim();
   // TODO: Determine which LEDs to turn on
@@ -129,6 +116,23 @@ void stimCycle(){
   moveStripByWellDist();
 }
 
+void setup() {
+  stripMotor.attach(STRIP_SERVO_PIN);
+  electrodeLiftServo.attach(ELECTRODE_SERVO_PIN);
+  pinMode(STRIP_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
+  pinMode(ELECTRODE_LIFT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
+  pinMode(LENS_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
+  pinMode(LENS_LED_PIN, OUTPUT);
+  pinMode(BOTTOM_LED_PIN, OUTPUT);
+  pinMode(SIDE_LED_PIN, OUTPUT);
+  loadingCycle();
+  electrodeServoConf();
+}
+
+void updateInputs(){
+  // gets the inputs from the user and updates all related variables.
+}
+
 void loop() { 
-  
+
 } 
