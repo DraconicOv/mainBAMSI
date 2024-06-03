@@ -1,0 +1,78 @@
+#Short encoder push to return to previous menu or 15s timeout to return to main menu, true for all screens
+{
+    "Status Screen": {
+        "0": "Temperature",
+        "1": "Lighting",
+        "2":"Timing",
+        "3":"Focus",
+        "4":"General Options",
+        "setting":false,
+        "previous": "Status Screen"}, #Encoder turn selects option, long push moves to next menu
+    "Temperature": {
+        "following": ["Current Temperature"],
+        "setting":true,
+        "previous":"Status Screen"}, #Encoder turn adjusts temp, Long push saves temp to flash and returns to previous menu
+    "Lighting": {
+        "0":"LED 1", 
+        "1":"LED 2",
+        "2": "LED 3",
+        "setting":false,
+        "previous": "Status Screen"}, #Encoder turn selects LED, long push enables editing
+    "LED 1": {
+        "0": "Brightness",
+        "setting":true,
+        "previous": "Lighting"}, #Encoder turn adjusts lighting, Long push enables changing highlighted LED Power.
+    "LED 2": {
+        "0": "Brightness",
+        "setting":true,
+        "previous": "Lighting"}, 
+    "LED 3": {
+        "0": "Brightness",
+        "setting":true,
+        "previous": "Lighting"}, 
+    "Timing": {
+        "0":"WaitB4StartDuration",
+        "1":"WaitB4StimDuration",
+        "2":"WaitB4MoveDuration",
+        "setting":false,
+        "previous":"Status Screen"}, # Encoder turn selects timing
+    "WaitB4StartDuration": {
+            "0": "Duration",
+            "setting":true,
+            "previous": "Timing"}, #Encoder turn adjusts timing, Long push saves timing to flash and returns to previous menu
+    "WaitB4StimDuration": {
+            "0": "Duration",
+            "setting":true,
+            "previous": "Timing"},
+    "WaitB4MoveDuration": {
+        "0": "Duration",
+        "setting":true,
+        "previous": "Timing"},
+    "Focus": {
+        "0": "Camera Position",
+        "setting":true,
+        "previous":"Status Screen"}, #Encoder turn adjusts position, Long push saves position to flash and returns to previous menu
+    "General Options": {
+        "0":"Time",
+        "1":"Date",
+        "2":"Timeout",
+        "3":"Confirmation Time",
+            "setting":false,
+            "previous":"Status Screen"}, #Encoder turn selects option, long push enables editing
+    "Time": {
+            "0":"Current Time",
+            "setting":true,
+            "previous":"General Options"}, #Encoder turn adjusts time, Long push saves time to flash and returns to previous menu
+    "Date": {
+        "0":"Current Date",
+            "setting":true,
+            "previous":"General Options"}, #Encoder turn adjusts date, Long push saves date to flash and returns to previous menu
+    "Timeout": {
+        "0":"Timeout Duration",
+            "setting":true,
+            "previous":"General Options"}, #Encoder turn adjusts timeout, Long push saves timeout to flash and returns to previous menu
+    "Confirmation Time": {
+            "0":"Confirmation Duration",
+                "setting":true,
+                "previous":"General Options"} #Encoder turn adjusts confirmation time, Long push saves confirmation time to flash and returns to previous menu
+}

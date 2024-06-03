@@ -1,4 +1,4 @@
 {
-    "board": "arduino:avr:uno",
+    "board": "arduino:sam:arduino_due_x_dbg",
     "sketch": "mainBAMSI.ino"
 }

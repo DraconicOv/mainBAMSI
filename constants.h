@@ -48,4 +48,11 @@ const int MAX31865_pin_2 = 12;
 const int MAX31865_pin_3 = 13;
 const int MAX31865_RREF = 430.0; //The value of the Rref resistor
 const int MAX31865_RNOMINAL = 100;// The 'nominal' 0-degrees-C resistance of the sensor 100.0 for PT100, 1000.0 for PT1000
+const int JOYSTICK_BUTTON_PIN = 39;
+const int JOYSTICK_X_PIN = A8;
+const int JOYSTICK_Y_PIN = A9;
+
+const int SHORT_PRESS_DURATION = 1000; // 1 second, might be updated by user
+const int LONG_PRESS_DURATION = 3000; // 3 seconds, might be updated by user
+
 #endif
