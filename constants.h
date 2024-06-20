@@ -64,4 +64,5 @@ const int SHORT_PRESS_DURATION = 1000; // 1 second, might be updated by user
 const int LONG_PRESS_DURATION = 3000; // 3 seconds, might be updated by user
 
 const int CAMERA_POS = 20; // The number of steps forward from the limit switch the camera should be
+const int CAMERA_STEPS = 100; // The number of steps per cycle the camera should move.
 #endif

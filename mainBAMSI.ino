@@ -35,6 +35,7 @@ Adafruit_MAX31865 thermo = Adafruit_MAX31865(MAX31865_pin_0, MAX31865_pin_1, MAX
 bool start = false;
 int userSetTemp = 0; 
 int currentWell = 0;
+int in_time = 0;
 Dictionary &screens = *(new Dictionary());
 Dictionary &currentScreen = *(new Dictionary()); 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
@@ -120,12 +121,13 @@ void moveElectrodeToRest(){
 void configCamera(){
   Serial.println("Configuring Camera");
   Serial.println(digitalRead(LENS_MOVEMENT_LIMIT_PIN) != HIGH);
-  lensMotor -> onestep(BACKWARD, DOUBLE);
+  // lensMotor -> onestep(BACKWARD, DOUBLE);
   // lensMotor -> step(100, BACKWARD, SINGLE);
 
   while(digitalRead(LENS_MOVEMENT_LIMIT_PIN) != HIGH){
+      lensMotor -> step(CAMERA_STEPS, BACKWARD, MICROSTEP);
   }
-  // lensMotor -> step(CAMERA_POS, BACKWARD, MICROSTEP);
+  lensMotor -> step(CAMERA_POS, FORWARD, MICROSTEP);
 }
 
 // TODO: this function
@@ -159,21 +161,21 @@ boolean canceled(){
 // TODO 
 void updateInputs(){
   // gets the inputs from the user and updates all related variables.
-  // joystickXValue = analogRead(JOYSTICK_X_PIN);  
-  // joystickYValue = analogRead(JOYSTICK_Y_PIN);
-  // buttonValue = 0;
-  // if (digitalRead(JOYSTICK_BUTTON_PIN) && !reset){
-  //   time = millis();
-  //   reset = true;
-  // }
-  // else if (!digitalRead(JOYSTICK_BUTTON_PIN) && reset)
-  //   reset = false;
-  // if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - time >= LONG_PRESS_DURATION)){
-  //   buttonValue = 2;
-  // }
-  // else if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - time >= SHORT_PRESS_DURATION)){
-  //   buttonValue = 1;
-  // }
+  joystickXValue = analogRead(JOYSTICK_X_PIN);  
+  joystickYValue = analogRead(JOYSTICK_Y_PIN);
+  buttonValue = 0;
+  if (digitalRead(JOYSTICK_BUTTON_PIN) && !reset){
+    in_time = millis();
+    reset = true;
+  }
+  else if (!digitalRead(JOYSTICK_BUTTON_PIN) && reset)
+    reset = false;
+  if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - in_time >= LONG_PRESS_DURATION)){
+    buttonValue = 2;
+  }
+  else if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - in_time >= SHORT_PRESS_DURATION)){
+    buttonValue = 1;
+  }
 }
 
 void stimCycle(){
