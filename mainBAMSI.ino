@@ -100,9 +100,9 @@ void moveElectrodeToStim(){
 }
 // TODO: this function
 void cameraTrigger(){
-  digitalWrite(LENS_LED_PIN, HIGH);
+  analogWrite(ELECTRODE_LED_PIN, ELECTRODE_LED_POWER);
   // More information required to determine how to trigger the camera 
-  digitalWrite(LENS_LED_PIN, LOW);
+  analogWrite(ELECTRODE_LED_PIN, 0);
 }
 //TODO: this function
 void electrodeTrigger(){
@@ -184,19 +184,30 @@ void stimCycle(){
   currentWell++;
   moveElectrodeToStim();
   // TODO: Determine which LEDs to turn on
-  digitalWrite(SIDE_LED_PIN, HIGH);
-  digitalWrite(BOTTOM_LED_PIN, HIGH);
+  analogWrite(SIDE_LED_PIN, SIDE_LED_POWER);
+  analogWrite(BOTTOM_LED_PIN, BOTTOM_LED_POWER);
   delay(DELAY_DURATATION);
   //Camera Trigger: TBD
   cameraTrigger();
   delay(DELAY_DURATATION);
   //Electrode Trigger: TBD
   electrodeTrigger();
-  digitalWrite(SIDE_LED_PIN, LOW);
-  digitalWrite(BOTTOM_LED_PIN, LOW);
+  analogWrite(SIDE_LED_PIN, 0);
+  analogWrite(BOTTOM_LED_PIN, 0);
   delay(DELAY_DURATATION);
   moveElectrodeToRest();
   moveStripByWellDist();
+}
+
+void allLEDsOn(){
+  analogWrite(SIDE_LED_PIN, SIDE_LED_POWER);
+  analogWrite(BOTTOM_LED_PIN, BOTTOM_LED_POWER);
+  analogWrite(ELECTRODE_LED_PIN, ELECTRODE_LED_POWER);
+}
+void allLEDsOff(){
+  analogWrite(SIDE_LED_PIN, 0);
+  analogWrite(BOTTOM_LED_PIN, 0);
+  analogWrite(ELECTRODE_LED_PIN, 0);
 }
 
 void setup() {
@@ -210,9 +221,10 @@ void setup() {
   pinMode(STRIP_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // HIGH reading means switch is down, or not connected to ground
   pinMode(ELECTRODE_LIFT_LIMIT_PIN, INPUT_PULLUP); // HIGH reading means switch is down, or not connected to ground
   pinMode(LENS_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // HIGH reading means switch is down, or not connected to ground
-  pinMode(LENS_LED_PIN, OUTPUT);
+  pinMode(ELECTRODE_LED_PIN, OUTPUT);
   pinMode(BOTTOM_LED_PIN, OUTPUT);
   pinMode(SIDE_LED_PIN, OUTPUT);
+  allLEDsOff();
   pinMode(JOYSTICK_BUTTON_PIN, INPUT);
   lensMotor -> setSpeed(60);
   Serial.begin(9600);
@@ -222,14 +234,6 @@ void setup() {
 }
 
 void loop() { 
-    // Serial.print("electrode movement is high if this is 1: ");
-    // Serial.println(digitalRead(ELECTRODE_LIFT_LIMIT_PIN) == HIGH);
-    // Serial.println(electrodeLiftServo.read());
-
-    // Serial.print("Electrode movement is high if this is 1: ");
-    // Serial.println(digitalRead(ELECTRODE_LIFT_LIMIT_PIN) == HIGH);
-    // Serial.print("lens movement is high if this is 1: ");
-    // Serial.println(digitalRead(LENS_MOVEMENT_LIMIT_PIN) == HIGH);
   // updateInputs();
   // if (start && !canceled()){
   //   stimCycle();

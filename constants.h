@@ -12,6 +12,7 @@ const int ELECTRODE_SERVO_PIN = 10;
  * It is set to 11, and the `analogWrite()` function can be used to control the LED brightness.
  */
 const int ELECTRODE_LED_PIN = 11; //write it to max value
+const int ELECTRODE_LED_POWER = 255;
 /**
  * @brief The pin number for the bottom LED.
  *time
@@ -19,6 +20,7 @@ const int ELECTRODE_LED_PIN = 11; //write it to max value
  * It is set to 12, and the `analogWrite()` function can be used to control the LED brightness.
  */
 const int BOTTOM_LED_PIN = 12; // cap out at 20
+const int BOTTOM_LED_POWER = 20;
 /**
  * @brief The pin number for the side LED.
  *
@@ -26,6 +28,7 @@ const int BOTTOM_LED_PIN = 12; // cap out at 20
  * It is set to 13, and the `analogWrite()` function can be used to control the LED brightness.
  */
 const int SIDE_LED_PIN = 13; // cap out at 70 or 75
+const int SIDE_LED_POWER = 72;
 
 const int SERVO_FORWARD = 116; // Speed that moves servo forward, if servo is reversed might need to be switched with @SERVO_BACKWARD
 const int SERVO_BACKWARD = 56; // Speed that moves servo backward, if servo is reversed might need to be switched with @SERVO_FORWARD
