@@ -5,7 +5,11 @@
 #include <LiquidCrystal_I2C.h>
 #include <Adafruit_MAX31865.h>
 #include <Servo.h>
+#include <Wire.h>
+#include <Adafruit_MotorShield.h>
+#include <Adafruit_PWMServoDriver.h>
 #include "constants.h"
+
 
 Servo stripMotor;
 Servo electrodeLiftServo; 
@@ -33,24 +37,36 @@ int userSetTemp = 0;
 int currentWell = 0;
 Dictionary &screens = *(new Dictionary());
 Dictionary &currentScreen = *(new Dictionary()); 
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
+Adafruit_StepperMotor *lensMotor = AFMS.getStepper(64, 1);
 
 int joystickXValue = 0 ; // To store value of the X axis
 int joystickYValue = 0 ; // To store value of the Y axis
-unsigned long time;
+// unsigned long time;
 bool reset = false;
 int buttonValue = 0;
+int loading_time = 0;
 
 void loadingCycle(){
-  // Move servo StripServo until limit switch StripLim is reached, reset counter Strip0Pos
-  while(digitalRead(STRIP_MOVEMENT_LIMIT_PIN) == HIGH){ // Move forward until we limit switch is reached
-    stripMotor.write(SERVO_BACKWARD); //can increase if necessary, will make it move faster
-    delay(1);
+  Serial.println("Loading Cycle");
+  
+  // Serial.println(digitalRead(STRIP_MOVEMENT_LIMIT_PIN) != HIGH);
+
+  // Move servo StripServo until limit switch StripLim is reached, reset counter Strip0Pos 
+  while(digitalRead(STRIP_MOVEMENT_LIMIT_PIN) != HIGH){ // Move forward until we limit switch is reached
+    stripMotor.write(SERVO_FORWARD); //can increase if necessary, will make it move faster
+    // Serial.println(digitalRead(STRIP_MOVEMENT_LIMIT_PIN) != HIGH);
   }
   stripMotor.write(SERVO_STOP); // Stop the servo
-  stripMotor.write(SERVO_FORWARD); // Move to the image position
+  Serial.println(loading_time);
+  Serial.println(stripMotor.readMicroseconds());
+  // 351
+  stripMotor.write(SERVO_STOP); // Stop the servo
+  stripMotor.write(SERVO_BACKWARD); // Move to the image position
   delay(STRIP_IMG_POS); // Wait for the servo to move to the image position
   stripMotor.write(SERVO_STOP); // Stop the servo
-  servoPos = STRIP_IMG_POS; 
+  servoPos = STRIP_IMG_POS;
+
 }
 
 void unloadingCycle(){
@@ -62,14 +78,20 @@ void unloadingCycle(){
 
 void electrodeServoConf(){
   // move electrode servo backwards until limit switch ElektrLim is reached, reset counter Electr0Pos, then move servo into stimulation position
-  // int electrodePos = electrodeLiftServo.read();
-  while (digitalRead(ELECTRODE_LIFT_LIMIT_PIN) == HIGH)
+  int electrodePos = 0;
+  Serial.print("electrode config started electrode at ");
+  Serial.println(electrodePos);
+  Serial.println(digitalRead(ELECTRODE_LIFT_LIMIT_PIN) != HIGH);
+  while (digitalRead(ELECTRODE_LIFT_LIMIT_PIN) != HIGH)
   {
-    electrodePos++; // Might need to be -- depending on orientation of servo
+    electrodePos+=1; // Might need to be -- depending on orientation of servo
     electrodeLiftServo.write(electrodePos);
-    delay(10);
+    delay(1);
+    Serial.println(digitalRead(ELECTRODE_LIFT_LIMIT_PIN));
   }
+  Serial.println("electrode done");
   electrode0Pos = electrodePos;
+  electrodeLiftServo.write(0);
 }
 // Temporary function, determine how to determine the stimulation position and how to move electrode there.
 void moveElectrodeToStim(){
@@ -94,6 +116,18 @@ void moveElectrodeToRest(){
     delay(10);
   }
 }
+
+void configCamera(){
+  Serial.println("Configuring Camera");
+  Serial.println(digitalRead(LENS_MOVEMENT_LIMIT_PIN) != HIGH);
+  lensMotor -> onestep(BACKWARD, DOUBLE);
+  // lensMotor -> step(100, BACKWARD, SINGLE);
+
+  while(digitalRead(LENS_MOVEMENT_LIMIT_PIN) != HIGH){
+  }
+  // lensMotor -> step(CAMERA_POS, BACKWARD, MICROSTEP);
+}
+
 // TODO: this function
 void setHeat(bool heat){
   if(heat){
@@ -125,21 +159,21 @@ boolean canceled(){
 // TODO 
 void updateInputs(){
   // gets the inputs from the user and updates all related variables.
-  joystickXValue = analogRead(JOYSTICK_X_PIN);  
-  joystickYValue = analogRead(JOYSTICK_Y_PIN);
-  buttonValue = 0;
-  if (digitalRead(JOYSTICK_BUTTON_PIN) && !reset){
-    time = millis();
-    reset = true;
-  }
-  else if (!digitalRead(JOYSTICK_BUTTON_PIN) && reset)
-    reset = false;
-  if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - time >= LONG_PRESS_DURATION)){
-    buttonValue = 2;
-  }
-  else if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - time >= SHORT_PRESS_DURATION)){
-    buttonValue = 1;
-  }
+  // joystickXValue = analogRead(JOYSTICK_X_PIN);  
+  // joystickYValue = analogRead(JOYSTICK_Y_PIN);
+  // buttonValue = 0;
+  // if (digitalRead(JOYSTICK_BUTTON_PIN) && !reset){
+  //   time = millis();
+  //   reset = true;
+  // }
+  // else if (!digitalRead(JOYSTICK_BUTTON_PIN) && reset)
+  //   reset = false;
+  // if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - time >= LONG_PRESS_DURATION)){
+  //   buttonValue = 2;
+  // }
+  // else if (digitalRead(JOYSTICK_BUTTON_PIN) && (millis() - time >= SHORT_PRESS_DURATION)){
+  //   buttonValue = 1;
+  // }
 }
 
 void stimCycle(){
@@ -166,28 +200,40 @@ void stimCycle(){
 }
 
 void setup() {
-  File a = SD.open("screens.json"); // Open the screens file
-  screens.jload(a); // Load the screens file into the screens dictionary
-  a.close(); // Close the screens file
-  currentScreen.jload(screens["Status Screen"]);
+  // File a = SD.open("screens.json"); // Open the screens file
+  // screens.jload(a); // Load the screens file into the screens dictionary
+  // a.close(); // Close the screens file
+  // currentScreen.jload(screens["Status Screen"]);
   stripMotor.attach(STRIP_SERVO_PIN);
+  stripMotor.write(SERVO_STOP);
   electrodeLiftServo.attach(ELECTRODE_SERVO_PIN);
-  pinMode(STRIP_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
-  pinMode(ELECTRODE_LIFT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
-  pinMode(LENS_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // LOW reading means switch is down
+  pinMode(STRIP_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // HIGH reading means switch is down, or not connected to ground
+  pinMode(ELECTRODE_LIFT_LIMIT_PIN, INPUT_PULLUP); // HIGH reading means switch is down, or not connected to ground
+  pinMode(LENS_MOVEMENT_LIMIT_PIN, INPUT_PULLUP); // HIGH reading means switch is down, or not connected to ground
   pinMode(LENS_LED_PIN, OUTPUT);
   pinMode(BOTTOM_LED_PIN, OUTPUT);
   pinMode(SIDE_LED_PIN, OUTPUT);
   pinMode(JOYSTICK_BUTTON_PIN, INPUT);
-  loadingCycle();
-  electrodeServoConf();
+  lensMotor -> setSpeed(60);
+  Serial.begin(9600);
+  // loadingCycle();
+  // electrodeServoConf();
+  configCamera();
 }
 
 void loop() { 
-  updateInputs();
-  if (start && !canceled()){
-    stimCycle();
-  }
-  electrodeLiftServo.detach();
-  stripMotor.detach();
+    // Serial.print("electrode movement is high if this is 1: ");
+    // Serial.println(digitalRead(ELECTRODE_LIFT_LIMIT_PIN) == HIGH);
+    // Serial.println(electrodeLiftServo.read());
+
+    // Serial.print("Electrode movement is high if this is 1: ");
+    // Serial.println(digitalRead(ELECTRODE_LIFT_LIMIT_PIN) == HIGH);
+    // Serial.print("lens movement is high if this is 1: ");
+    // Serial.println(digitalRead(LENS_MOVEMENT_LIMIT_PIN) == HIGH);
+  // updateInputs();
+  // if (start && !canceled()){
+  //   stimCycle();
+  // }
+  // electrodeLiftServo.detach();
+  // stripMotor.detach();
 } 
